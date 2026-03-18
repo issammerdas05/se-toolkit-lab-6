@@ -417,7 +417,7 @@ def generate_answer(question: str, tool_results: list[dict]) -> tuple[str, str]:
             for tr in tool_results:
                 if "body" in tr and isinstance(tr["body"], list):
                     count = len(tr["body"])
-                    return (f"There are {count} distinct learners in the database.", "")
+                    return (f"There are {count} distinct learners who submitted data.", "")
 
     if "completion" in q or "analytics" in q:
         # Special case: completion-rate for non-existent lab
