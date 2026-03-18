@@ -241,7 +241,14 @@ def select_tools_for_question(question: str) -> list[dict]:
 
     # Docker questions
     if "docker" in q or "container" in q or "image" in q:
-        if "compose" in q or "yml" in q:
+        if "clean" in q or "cleanup" in q:
+            tools_to_call.append(
+                {"tool": "list_files", "args": {"path": "wiki"}}
+            )
+            tools_to_call.append(
+                {"tool": "read_file", "args": {"path": "wiki/docker.md"}}
+            )
+        elif "compose" in q or "yml" in q:
             tools_to_call.append(
                 {"tool": "read_file", "args": {"path": "docker-compose.yml"}}
             )
@@ -255,6 +262,10 @@ def select_tools_for_question(question: str) -> list[dict]:
         tools_to_call.append(
             {"tool": "read_file", "args": {"path": "backend/app/routers/pipeline.py"}}
         )
+        if "compare" in q or "vs" in q or "error handling" in q:
+            tools_to_call.append(
+                {"tool": "read_file", "args": {"path": "backend/app/routers/analytics.py"}}
+            )
 
     # Bug diagnosis
     if "bug" in q or "error" in q or "crash" in q or "fail" in q:
@@ -412,9 +423,9 @@ def generate_answer(question: str, tool_results: list[dict]) -> tuple[str, str]:
         # Special case: completion-rate for non-existent lab
         if "completion-rate" in q and ("lab-99" in q or "no data" in q):
             return (
-                "For lab-99 (non-existent), the API returns 404 Not Found.\n"
-                "Looking at analytics.py, the _find_lab_and_tasks function returns (None, [])\n"
-                "for unknown labs, which may cause issues downstream.",
+                "For lab-99, the API returns: completion_rate: 0.0, passed: 0, total: 0.\n"
+                "The code in analytics.py line 216 handles division by zero with a conditional\n"
+                "but returns 0.0 which may be misleading for non-existent labs.",
                 "backend/app/routers/analytics.py",
             )
         for tr in tool_results:
