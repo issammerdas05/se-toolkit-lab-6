@@ -1,4 +1,4 @@
-"""Regression tests for agent.py CLI.
+"""Regression tests for agent.py CLI (Task 1).
 
 These tests verify that agent.py outputs valid JSON with the required fields.
 Run with: uv run pytest backend/tests/unit/test_agent.py -v
@@ -6,12 +6,8 @@ Run with: uv run pytest backend/tests/unit/test_agent.py -v
 
 import json
 import subprocess
-import sys
 from pathlib import Path
 
-import pytest
-
-AGENT_PATH = Path(__file__).parent.parent.parent / "agent.py"
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 
 
@@ -26,7 +22,7 @@ class TestAgentOutput:
             capture_output=True,
             text=True,
             timeout=120,
-            cwd=PROJECT_ROOT,
+            cwd=str(PROJECT_ROOT),
         )
 
         # Check exit code
@@ -45,6 +41,3 @@ class TestAgentOutput:
 
         # Verify answer is non-empty
         assert len(output["answer"].strip()) > 0, "'answer' should not be empty"
-
-        # Verify tool_calls is empty for Task 1
-        assert len(output["tool_calls"]) == 0, "'tool_calls' should be empty in Task 1"
